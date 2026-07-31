@@ -1,0 +1,34 @@
+# pipeline_policy.yaml
+#
+# Governs adk-vendor-snapshot. Every tool call and model call is
+# checked against this file before it's allowed to proceed.
+#
+# Outcomes: allow | block | require_approval
+# Tiers are illustrative of risk, not just cost — see README design notes.
+
+version: 1
+
+defaults:
+  outcome: require_approval   # unknown/unlisted actions are NOT trusted by default
+
+tools:
+  google_search:
+    outcome: allow
+    tier: 1
+    reason: "Read-only, no external side effects"
+
+models:
+  gemini-2.5-flash:
+    outcome: allow
+    tier: 1
+    reason: "Low cost, approved for standard pipeline use"
+
+  gemini-2.5-pro:
+    outcome: require_approval
+    tier: 3
+    reason: "Higher cost per call; approve before use to avoid silent spend increase"
+
+limits:
+  max_input_tokens_per_call: 8000
+  max_output_tokens_per_call: 2000
+  over_limit_outcome: require_approval
