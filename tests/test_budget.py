@@ -49,3 +49,19 @@ def test_status_reports_correctly():
     assert s["spent_tokens"] == 500
     assert s["remaining"] == 500
     assert s["pct_used"] == 50.0
+
+def test_budget_from_policy_yaml():
+    """Proves run_budget.max_total_tokens in the policy file actually
+    drives the breaker — not just a number we typed into other tests."""
+    import yaml
+    with open("policies/pipeline_policy.yaml") as f:
+        config = yaml.safe_load(f)
+
+    limit = config["run_budget"]["max_total_tokens"]
+    assert limit == 20000
+
+    b = BudgetTracker(max_total_tokens=limit)
+    b.record(input_tokens=15000, output_tokens=4000)
+    assert b.spent_tokens == 19000
+    with pytest.raises(BudgetExceeded):
+        b.record(input_tokens=2000, output_tokens=0)

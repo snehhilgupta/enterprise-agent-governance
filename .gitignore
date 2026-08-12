@@ -5,3 +5,4 @@ __pycache__/
 traces/*.jsonl
 !traces/.gitkeep
 .venv/
+*.egg-info/

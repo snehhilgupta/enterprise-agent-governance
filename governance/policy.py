@@ -30,7 +30,13 @@ class Policy:
         self.default_outcome = self._raw.get("defaults", {}).get(
             "outcome", "require_approval"
         )
+    def limits_run_budget(self) -> int:
+            """Returns run_budget.max_total_tokens from the policy file.
 
+            Raises KeyError if not configured — a governance layer with
+            no budget ceiling is a silent gap, not a safe default.
+            """
+            return self._raw["run_budget"]["max_total_tokens"]
     def evaluate_tool(self, tool_name: str) -> dict:
         """Check a tool call against policy. Returns decision dict."""
         rule = self.tools.get(tool_name)
