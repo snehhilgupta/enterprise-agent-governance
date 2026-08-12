@@ -32,3 +32,6 @@ limits:
   max_input_tokens_per_call: 8000
   max_output_tokens_per_call: 2000
   over_limit_outcome: require_approval
+
+run_budget:
+  max_total_tokens: 20000
